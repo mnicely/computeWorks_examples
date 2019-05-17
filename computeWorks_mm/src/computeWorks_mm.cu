@@ -52,7 +52,7 @@ auto benchmarkGPU = [](auto fcnPtr, int const & loops) {
 		float elapsed_ms;
 		cudaEventElapsedTime( &elapsed_ms, startEvent, stopEvent );
 
-		std::printf( "%0.2f ms:\n", elapsed_ms / loops );
+		std::printf( "%0.2f ms\n", elapsed_ms / loops );
 
 	};
 
@@ -257,7 +257,8 @@ int main( int argc, char** argv ) {
 	int n;
 	if ( argc < 2 ) {
 		n = 1024;
-		printf("No input given\n. Running with N = %d\n\n", n);
+		printf("No input given.\n");
+		printf("Running with N = %d\n\n", n);
 	} else {
 		n = std::atoi( argv[1] );
 		printf("Running with N = %d\n\n", n);

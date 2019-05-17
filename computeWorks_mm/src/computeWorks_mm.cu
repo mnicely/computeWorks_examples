@@ -26,7 +26,7 @@ auto benchmark = [](auto fcnPtr, int const & loops) {
 
 		end = std::chrono::high_resolution_clock::now();
 		elapsed_ms = end - start;
-		std::printf( "%0.2f ms:\n", elapsed_ms.count() / loops );
+		std::printf( "%0.2f ms\n", elapsed_ms.count() / loops );
 
 	};
 

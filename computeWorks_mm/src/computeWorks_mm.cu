@@ -10,19 +10,18 @@
 auto constexpr tPB = 16;
 
 auto startTimer( ) {
-	return (std::chrono::high_resolution_clock::now());
+	return ( std::chrono::high_resolution_clock::now() );
 }
 
 auto stopTimer( ) {
-	return (std::chrono::high_resolution_clock::now());
+	return ( std::chrono::high_resolution_clock::now() );
 }
 
 auto startGPUTimer( ) {
 	cudaEvent_t startEvent = nullptr;
 	cudaEventCreate( &startEvent, cudaEventBlockingSync );
 	cudaEventRecord( startEvent );
-
-	return (startEvent);
+	return ( startEvent );
 }
 
 auto stopGPUTimer( ) {
@@ -30,14 +29,12 @@ auto stopGPUTimer( ) {
 	cudaEventCreate( &stopEvent, cudaEventBlockingSync );
 	cudaEventRecord( stopEvent );
 	cudaEventSynchronize( stopEvent );
-
-	return (stopEvent);
+	return ( stopEvent );
 }
 
 template<typename T>
 void printTime( T start, T stop, int const & loops ) {
 	std::chrono::duration<double, std::milli> elapsed_ms;
-
 	elapsed_ms = stop - start;
 	std::printf( "%0.2f ms\n", elapsed_ms.count() / loops );
 }
@@ -166,8 +163,7 @@ void blas(
 
 	for ( int l = 0; l < loops; l++ ) {
 
-		cblas_sgemm( CblasRowMajor, CblasNoTrans, CblasNoTrans, n, n, n, alpha, A, n, B, n, beta, C,
-				n );
+		cblas_sgemm( CblasRowMajor, CblasNoTrans, CblasNoTrans, n, n, n, alpha, A, n, B, n, beta, C, n );
 	}
 	auto end = stopTimer();
 
@@ -227,8 +223,7 @@ void cublas(
 
 	auto startEvent = startGPUTimer();
 	for ( int l = 0; l < loops; l++ )
-		cublasSgemm( handle, CUBLAS_OP_N, CUBLAS_OP_N, n, n, n, &alpha, d_A, n, d_B, n, &beta, d_C,
-				n );
+		cublasSgemm( handle, CUBLAS_OP_N, CUBLAS_OP_N, n, n, n, &alpha, d_A, n, d_B, n, &beta, d_C, n );
 	auto stopEvent = stopGPUTimer();
 
 	cudaDeviceSynchronize();
@@ -241,7 +236,7 @@ void cublas(
 	cudaFree( d_C );
 	cublasDestroy( handle );
 
-	printGPUTime(startEvent, stopEvent, loops);
+	printGPUTime( startEvent, stopEvent, loops );
 }
 
 __global__ void cudaKernel(
@@ -303,7 +298,7 @@ void cuda(
 	cudaFree( d_B );
 	cudaFree( d_C );
 
-	printGPUTime(startEvent, stopEvent, loops);
+	printGPUTime( startEvent, stopEvent, loops );
 }
 
 int main( int argc, char** argv ) {

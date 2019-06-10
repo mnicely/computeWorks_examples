@@ -2,7 +2,7 @@ FROM nvcr.io/nvidia/cuda:latest
 
 ################################################################################################
 ## Run the following command to build Docker images																						##
-## docker build --network host -t pgi_19.4 -f Dockerfile.cuda10.1_ubuntu18.04_pgi .  ##
+## docker build --network host -t pgi_19.4 -f Dockerfile.cuda10.1_ubuntu18.04_pgi .  					##
 ################################################################################################
 ## To use --squash, experimental must be set in Docker settings																##
 ## Modify /etc/docker/daemon.json 																														##
@@ -31,41 +31,6 @@ FROM nvcr.io/nvidia/cuda:latest
 SHELL ["/bin/bash", "-c"]
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV HOME /root
-
-WORKDIR ${HOME}
-
-## Install dependencies
-RUN echo "Installing common dependencies"
-RUN apt-get update
-RUN apt-get dist-upgrade -y
-RUN apt-get autoremove -y
-RUN apt-get autoclean
-RUN apt-get install -y --no-install-recommends \
-    ant \
-    apt-utils \
-    bash-completion \
-    build-essential \
-    cmake \
-    curl \
-    dialog \
-    git \
-    kmod \
-    less \
-    locate \
-    locales \
-    make \
-    nano \
-    net-tools \
-    pkg-config \
-    python-dev \
-    software-properties-common \
-    sudo \
-    ufw \
-    unzip \
-    wget \
-    zip
-RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*]
 
 # Install PGI
 ENV PGI_VERSION 19.4
@@ -96,30 +61,9 @@ RUN export PGI_SILENT=true && \
 RUN echo "${PGI_LIB_DIR}" >> /etc/ld.so.conf.d/pgi.conf
 
 ENV PATH            ${PGI_BIN_DIR}:${PATH}
-ENV LD_LIBRARY_PATH ${PGI_LIB_DIR}:${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH ${PGI_LIB_DIR}:/usr/local/cuda/extras/CUPTI/lib64:${LD_LIBRARY_PATH}
 ENV MANPATH         ${PGI_MAN_DIR}:${MANPATH}
-
-## Set environment variables
-ENV CCACHE_CPP2=1
-ENV CCACHE_MAXSIZE=1G
-ENV PATH "/usr/lib/ccache:$PATH"
-ENV TERM=xterm
-
-## This is required to ensure GUI display
-ENV DISPLAY :0
-
-WORKDIR ${HOME}
-
-## Copy Dockerfile to image
-COPY Dockerfile.cuda10.1_ubuntu18.04_pgi .
-
-## One last update. This will allow better searching for apps
-RUN apt-get update -qq
-
-RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
-RUN locale-gen en_US.UTF-8
+ENV PGI_ACC_TIME=1
 
 ## Labels
 LABEL pgi_version "2019.4"

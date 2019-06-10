@@ -7,8 +7,6 @@
 #include <cblas.h>		// OpenBLAS - PGI
 #include <cublas_v2.h>	// cuBLAS
 
-auto constexpr tPB = 16;
-
 auto startTimer( ) {
 	return ( std::chrono::high_resolution_clock::now() );
 }
@@ -110,7 +108,6 @@ void normalC(
 	auto end = stopTimer();
 
 	printTime( start, end, loops );
-
 }
 
 void openMP(
@@ -161,10 +158,8 @@ void blas(
 
 	auto start = startTimer();
 
-	for ( int l = 0; l < loops; l++ ) {
-
+	for ( int l = 0; l < loops; l++ )
 		cblas_sgemm( CblasRowMajor, CblasNoTrans, CblasNoTrans, n, n, n, alpha, A, n, B, n, beta, C, n );
-	}
 	auto end = stopTimer();
 
 	printTime( start, end, loops );
@@ -281,8 +276,9 @@ void cuda(
 	cudaMemcpy( d_B, B, sizeof(float) * n * n, cudaMemcpyHostToDevice );
 
 	// setup the dimensions
-	dim3 blocksPerGrid( ( n + tPB - 1 ) / tPB, ( n + tPB - 1 ) / tPB );
-	dim3 threadsPerBlock( tPB, tPB );
+	int threads = 16;
+	dim3 blocksPerGrid( ( n + threads - 1 ) / threads, ( n + threads - 1 ) / threads );
+	dim3 threadsPerBlock( threads, threads );
 
 	auto startEvent = startGPUTimer();
 	for ( int l = 0; l < loops; l++ )
@@ -362,11 +358,11 @@ int main( int argc, char** argv ) {
 	verify( n, h_C, h_C_acc );
 
 	// Memory clean up
-	delete ( h_A );
-	delete ( h_B );
-	delete ( h_C );
-	delete ( h_C_mp );
-	delete ( h_C_acc );
-	delete ( h_C_cublas );
-	delete ( h_C_cuda );
+	delete[] ( h_A );
+	delete[] ( h_B );
+	delete[] ( h_C );
+	delete[] ( h_C_mp );
+	delete[] ( h_C_acc );
+	delete[] ( h_C_cublas );
+	delete[] ( h_C_cuda );
 }

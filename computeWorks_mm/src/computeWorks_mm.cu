@@ -337,7 +337,7 @@ int main( int argc, char** argv ) {
 	openMP( n, alpha, h_A, h_B, beta, h_C_mp, 5 );
 	verify( n, h_C, h_C_mp );
 
-	// Benchmark and verify OpenMP matrix multiplication
+	// Benchmark and verify BLAS matrix multiplication
 	printf( "Running BLAS: " );
 	blas( n, alpha, h_A, h_B, beta, h_C_blas, 500 );
 	verify( n, h_C, h_C_blas );

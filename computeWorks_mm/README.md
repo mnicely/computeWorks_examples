@@ -71,7 +71,7 @@ echo -e "export LM_LICENSE_FILE=$LM_LICENSE_FILE:/opt/pgi/license.dat" >> ~/.bas
 1. Download [Eclipse IDE C/C++](https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/2019-03/R/eclipse-cpp-2019-03-R-linux-gtk-x86_64.tar.gz&mirror_id=1135)
 2. Install (assuming file is in *~/Downloads*)
 ```bash
-sudo tar xpfz ~/Downloads/eclipse-cpp-2019-03-R-linux-gtk-x86_64.tar.gz
+sudo tar xpfz ~/Downloads/eclipse-cpp-2019-03-R-linux-gtk-x86_64.tar.gz -C /opt
 sudo ln -s /opt/eclipse/eclipse /usr/local/bin/eclipse
 ```
 3. Install Nsight Eclipse Plugin -> [more details](https://docs.nvidia.com/cuda/nsightee-plugins-install-guide/index.html)

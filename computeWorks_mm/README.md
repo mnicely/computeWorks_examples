@@ -13,7 +13,11 @@ Optional:
 
 **The following installation instructions have been tested on Ubuntu 18.04.**
 
-**This example doesn't work completely with CUDA 10.1 Update 1 (issue being worked)**
+**This example has been tested with CUDA 10.0 and above.**
+
+**To view OpenACC profiling correctly with CUDA 10.1 Update 1.**
+
+**Use sudo LD_LIBRARY_PATH=/usr/local/cuda/extra/CUPTI/lib64:$LD_LIBRARY_PATH ./computeWorks_mm**
 
 ## Installation
 ### CUDA -> [more details](https://docs.nvidia.com/cuda/cuda-quick-start-guide/index.html#ubuntu-x86_64-deb)

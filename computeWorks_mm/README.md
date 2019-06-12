@@ -152,7 +152,7 @@ cp ~/Downloads/pgilinux-2019-194-x86-64.tar.gz .
 docker build -t cuda-10.1_ubuntu-18.04_pgi-19.4 -f Dockerfile.cuda-10.1_ubuntu-18.04_pgi-19.4 .
 ```
 
-### JupyterLab
+### Jupyter Notebook
 
 1. Install PIP package manager
 ```bash
@@ -161,7 +161,7 @@ sudo apt install python-pip
 2. Install JupyterLab
 ```bash
 sudo -H pip install --upgrade pip
-sudo -H pip install jupyter jupyterlab
+sudo -H pip install jupyter
 ```
 
 ## Usage
@@ -204,7 +204,6 @@ Eclipse, with Nsight Eclipse Plugins offers full-featured IDE that provides an a
 ```bash
 eclipse &
 ```
-
 2. Import Project
   - File -> Import...
   - **Select** -> Git -> Projects from Git -> [_Next >_]
@@ -232,4 +231,8 @@ eclipse &
 4. Run Project
   - Right click _computeWorks_mm_ -> Run As -> Local C/C++ Application
 
-
+### JupyterLab
+1. Open `computeWorks_mm.ipynb'
+```bash
+jupyter-notebook computeWorks_mm.ipynb
+```

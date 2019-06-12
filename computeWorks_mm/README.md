@@ -247,6 +247,6 @@ eclipse &
 ### JupyterLab
 1. Open `computeWorks_mm.ipynb'
 ```bash
-cd ~/git/computeWorks_examples/computeWorks_mm/jupyter
+cd computeWorks_examples/computeWorks_mm/jupyter
 jupyter-notebook computeWorks_mm.ipynb
 ```

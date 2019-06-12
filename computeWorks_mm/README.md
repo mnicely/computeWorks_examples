@@ -245,7 +245,8 @@ eclipse &
   - Right click _computeWorks_mm_ -> Run As -> Local C/C++ Application
 
 ### JupyterLab
-1. Open `computeWorks_mm.ipynb'
+- This approach requires **[Administration instructions](https://developer.nvidia.com/nvidia-development-tools-solutions-ERR_NVGPUCTRPERM-permission-issue-performance-counters#SolnAdminTag).**
+1. Open _computeWorks_mm.ipynb_
 ```bash
 cd computeWorks_examples/computeWorks_mm/jupyter
 jupyter-notebook computeWorks_mm.ipynb

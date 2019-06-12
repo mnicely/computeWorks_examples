@@ -160,7 +160,8 @@ sudo apt install python-pip
 ```
 2. Install JupyterLab
 ```bash
-pip install jupyterlab
+python3 -m pip install --upgrade pip
+python3 -m pip install jupyter jupyterlab
 ```
 
 ## Usage

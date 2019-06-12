@@ -152,6 +152,17 @@ cp ~/Downloads/pgilinux-2019-194-x86-64.tar.gz .
 docker build -t cuda-10.1_ubuntu-18.04_pgi-19.4 -f Dockerfile.cuda-10.1_ubuntu-18.04_pgi-19.4 .
 ```
 
+### JupyterLab
+
+1. Install PIP package manager
+```bash
+sudo apt install python-pip
+```
+2. Install JupyterLab
+```bash
+pip install jupyterlab
+```
+
 ## Usage
 ### Bare Metal
 - This approach requires **PGI Community Edition (Bare Metal)**
@@ -219,3 +230,5 @@ eclipse &
   - Image -> cuda-10.1_ubuntu-18.04_pgi-19.4:latest
 4. Run Project
   - Right click _computeWorks_mm_ -> Run As -> Local C/C++ Application
+
+

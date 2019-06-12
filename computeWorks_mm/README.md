@@ -11,13 +11,26 @@ Optional:
 - Docker CE + NVIDIA-Docker v2
   - PGI Docker image
 
-**The following installation instructions have been tested on Ubuntu 18.04.**
+**The following installation instructions have been tested on Ubuntu 18.04 and CUDA 10.0+.**
 
-**This example has been tested with CUDA 10.0 and above.**
+**OpenACC profiling with NVIDIA driver 418.67 and above requires elevated permissions. See [here](https://developer.nvidia.com/nvidia-development-tools-solutions-err-nvgpuctrperm-cupti).** 
 
-**To view OpenACC profiling correctly with CUDA 10.1 Update 1.**
+**You can achieve this one of two ways.**
 
-**Use sudo LD_LIBRARY_PATH=/usr/local/cuda/extra/CUPTI/lib64:$LD_LIBRARY_PATH ./computeWorks_mm**
+1. **Run command with sudo**
+```bash
+sudo LD_LIBRARY_PATH=/usr/local/cuda/extra/CUPTI/lib64:$LD_LIBRARY_PATH ./computeWorks_mm
+```
+2. **Following [Administration instructions](https://developer.nvidia.com/nvidia-development-tools-solutions-ERR_NVGPUCTRPERM-permission-issue-performance-counters#SolnAdminTag).**
+```bash
+sudo systemctl isolate multi-user # Stop the window manager
+modprobe -r nvidia_uvm nvidia_drm nvidia_modeset nvidia-vgpu-vfio nvidia # Unload dependent modules
+cd /etc/modprobe.d/
+sudo touch nvidia.conf # Create file named nvidia.conf
+sudo su # Switch to root
+sudo echo -e "options nvidia "NVreg_RestrictProfilingToAdminUsers=0"" > nvidia.conf
+sudo reboot
+```
 
 ## Installation
 ### CUDA -> [more details](https://docs.nvidia.com/cuda/cuda-quick-start-guide/index.html#ubuntu-x86_64-deb)
@@ -234,5 +247,6 @@ eclipse &
 ### JupyterLab
 1. Open `computeWorks_mm.ipynb'
 ```bash
+cd ~/git/computeWorks_examples/computeWorks_mm/jupyter
 jupyter-notebook computeWorks_mm.ipynb
 ```

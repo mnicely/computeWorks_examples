@@ -24,12 +24,12 @@ sudo LD_LIBRARY_PATH=/usr/local/cuda/extra/CUPTI/lib64:$LD_LIBRARY_PATH ./comput
 2. **Following [Administration instructions](https://developer.nvidia.com/nvidia-development-tools-solutions-ERR_NVGPUCTRPERM-permission-issue-performance-counters#SolnAdminTag).**
 ```bash
 sudo systemctl isolate multi-user # Stop the window manager
+sudo su # Switch to root
 modprobe -r nvidia_uvm nvidia_drm nvidia_modeset nvidia-vgpu-vfio nvidia # Unload dependent modules
 cd /etc/modprobe.d/
-sudo touch nvidia.conf # Create file named nvidia.conf
-sudo su # Switch to root
-sudo echo -e "options nvidia "NVreg_RestrictProfilingToAdminUsers=0"" > nvidia.conf
-sudo reboot
+touch nvidia.conf # Create file named nvidia.conf
+echo -e "options nvidia "NVreg_RestrictProfilingToAdminUsers=0"" > nvidia.conf
+reboot
 ```
 
 ## Installation

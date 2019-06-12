@@ -249,14 +249,14 @@ eclipse &
   - **Select a wizard to use for importing projects** -> Import existing Eclipse project -> [_Next >_]
   - **Import Projects** -> [_Finish_]
   
-## Baremetal
+#### Baremetal
 - This approach requires **PGI Community Edition (Bare Metal)**
 3. Build Project
   - Right click  _computeWorks_mm_ -> Build Project or Press Ctrl + B
 4. Run Project
   - Right click _computeWorks_mm_ -> Run As -> Local C/C++ Application
 
-## Docker container 
+#### Docker container 
 - This approach requires **PGI Community Edition (Docker Image)**
 3. Point to PGI Docker container
   - Right click  _computeWorks_mm_ -> Properties

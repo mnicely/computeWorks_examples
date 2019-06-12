@@ -143,11 +143,7 @@ sudo apt-get install nvidia-docker2 -y
 ```bash
 sudo pkill -SIGHUP dockerd
 ```
-5. Verify you can launch docker container with access to GPU
-```bash
-docker run --runtime=nvidia --rm nvcr.io/nvidia/cuda:latest nvidia-smi
-```
-6. (Optional) Modify Docker daemon to storage images in /home versus /var. Usually /home has more space.
+5. (Optional) Modify Docker daemon to storage images in /home versus /var. Usually /home has more space.
 ```bash 
 sudo nano /etc/docker/daemon.json
 ```
@@ -163,6 +159,13 @@ sudo nano /etc/docker/daemon.json
     "graph": "/home/belt",
     "storage-driver": "overlay2"
 }
+```
+```bash
+sudo service docker restart
+```
+6. Verify you can launch docker container with access to GPU
+```bash
+docker run --runtime=nvidia --rm nvcr.io/nvidia/cuda:latest nvidia-smi
 ```
 
 ### PGI Community Edition (Docker Image)

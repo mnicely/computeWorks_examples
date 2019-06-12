@@ -10,6 +10,7 @@ Optional:
 - Eclipse IDE C/C++
 - Docker CE + NVIDIA-Docker v2
   - PGI Docker image
+- Jupyter Notebook
 
 **The following installation instructions have been tested on Ubuntu 18.04 and CUDA 10.0+.**
 

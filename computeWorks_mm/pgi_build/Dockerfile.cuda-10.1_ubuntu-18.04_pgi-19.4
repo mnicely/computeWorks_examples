@@ -1,32 +1,34 @@
 FROM nvcr.io/nvidia/cuda:latest
 
-################################################################################################
-## Run the following command to build Docker images																						##
-## docker build --network host -t pgi_19.4 -f Dockerfile.cuda10.1_ubuntu18.04_pgi .  					##
-################################################################################################
-## To use --squash, experimental must be set in Docker settings																##
-## Modify /etc/docker/daemon.json 																														##
-##																																														##
-## Also, graph changes the storage of Docker images for /var/ to chosen directory							##
-##																																														##
-## {																																													##
-##     "runtimes": {																																					##
-##         "nvidia": {																																				##
-##             "path": "nvidia-container-runtime",																						##
-##             "runtimeArgs": []																															##
-##         }																																									##
-##     },																																											##
-##    "experimental": true,																																		##
-##		"graph": "/home/<whoami>",																															##
-##		"storage-driver": "overlay2",																														##
-## }																																													##
-################################################################################################
-## Run the following command to start Docker image  																					##
-## docker run -it --runtime=nvidia --name pgi_19.4 pgi_19.4:latest                            ##
-##																																														##
-## Once in the Docker image, run nvidia-smi to confirm you have access to the GPUs						##
-##																																														##
-################################################################################################
+##################################################################################################
+## Run the following command to build Docker images												##
+## docker build -t pgi_19.4 -f Dockerfile.cuda-10.1_ubuntu-18.04_pgi-19.4 .  	##
+##################################################################################################
+## To use --squash, experimental must be set in Docker settings									##
+## Modify /etc/docker/daemon.json 																##
+##																								##
+## Also, graph changes the storage of Docker images for /var/ to chosen directory				##
+##																								##
+## {																							##
+##     "runtimes": {																			##
+##         "nvidia": {																			##
+##             "path": "nvidia-container-runtime",												##
+##             "runtimeArgs": []																##
+##         }																					##
+##     },																						##
+##    "experimental": true,																		##
+##	  "graph": "/home/<whoami>",																##
+##	  "storage-driver": "overlay2"																##
+## }																							##
+##################################################################################################
+## Run the following command to start Docker image  											##
+## docker run -it --rm --runtime=nvidia --name pgi \											##
+##			-v /home/<whoami>/<computeWorks_mm dir>:/computeWorks_mm \							##
+##			-w /computeWorks_mm pgi_19.4:latest /bin/bash										##
+##																								##
+## Once in the Docker image, run nvidia-smi to confirm you have access to the GPUs				##
+##																								##
+##################################################################################################
 
 SHELL ["/bin/bash", "-c"]
 

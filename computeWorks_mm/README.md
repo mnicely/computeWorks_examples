@@ -156,7 +156,7 @@ sudo nano /etc/docker/daemon.json
         }
     },
     "experimental": true,
-    "graph": "/home/belt",
+    "graph": "/home/<whoami>",
     "storage-driver": "overlay2"
 }
 ```

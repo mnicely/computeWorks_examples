@@ -147,6 +147,24 @@ sudo pkill -SIGHUP dockerd
 ```bash
 docker run --runtime=nvidia --rm nvcr.io/nvidia/cuda:latest nvidia-smi
 ```
+6. (Optional) Modify Docker daemon to storage images in /home versus /var. Usually /home has more space.
+```bash 
+sudo nano /etc/docker/daemon.json
+```
+```bash
+{
+    "runtimes": {
+        "nvidia": {
+            "path": "nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    },
+    "experimental": true,
+    "graph": "/home/belt",
+    "storage-driver": "overlay2"
+}
+```
+
 ### PGI Community Edition (Docker Image)
 
 **This create a Docker image containing the PGI CE Compiler.**

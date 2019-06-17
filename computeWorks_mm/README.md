@@ -191,12 +191,11 @@ docker build -t cuda-10.1_ubuntu-18.04_pgi-19.4 -f Dockerfile.cuda-10.1_ubuntu-1
 
 1. Install PIP package manager
 ```bash
-sudo apt install python-pip
+sudo apt install python-pip3
 ```
 2. Install JupyterLab
 ```bash
-sudo -H pip install --upgrade pip
-sudo -H pip install jupyter
+sudo -H pip3 install jupyter
 ```
 
 ## Usage

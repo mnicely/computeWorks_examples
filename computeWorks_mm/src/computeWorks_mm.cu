@@ -1,3 +1,24 @@
+/*
+ * Copyright 1993-2019 NVIDIA Corporation.  All rights reserved.
+ *
+ * Please refer to the NVIDIA end user license agreement (EULA) associated
+ * with this source code for terms and conditions that govern your use of
+ * this software. Any use, reproduction, disclosure, or distribution of
+ * this software and related documentation outside the terms of the EULA
+ * is strictly prohibited.
+ */
+
+/*
+ * This sample compares performance between serial matrix multiplication the
+ * following parallel alternatives
+ *
+ * 1. OpenMP
+ * 2. BLAS
+ * 3. cuBLAS
+ * 4. CUDA
+ * 5. OpenACC
+ */
+
 #include <chrono>		// std::chrono
 #include <cmath> 		// std::sqrt, std::fabs
 #include <cstdio>		// std::printf
@@ -7,20 +28,16 @@
 #include <cblas.h>		// OpenBLAS - PGI
 #include <cublas_v2.h>	// cuBLAS
 
-auto startTimer( ) {
+auto getTimeCPU( ) {
 	return ( std::chrono::high_resolution_clock::now() );
-}
-
-auto stopTimer( ) {
-	return ( std::chrono::high_resolution_clock::now() );
-}
+} // getTimeCPU
 
 auto startGPUTimer( ) {
 	cudaEvent_t startEvent = nullptr;
 	cudaEventCreate( &startEvent, cudaEventBlockingSync );
 	cudaEventRecord( startEvent );
 	return ( startEvent );
-}
+} // startGPUTimer
 
 auto stopGPUTimer( ) {
 	cudaEvent_t stopEvent = nullptr;
@@ -28,31 +45,21 @@ auto stopGPUTimer( ) {
 	cudaEventRecord( stopEvent );
 	cudaEventSynchronize( stopEvent );
 	return ( stopEvent );
-}
+} // stopGPUTimer
 
 template<typename T>
-void printTime( T start, T stop, int const & loops ) {
+void printCPUTime( T start, T stop, int const & loops ) {
 	std::chrono::duration<double, std::milli> elapsed_ms;
 	elapsed_ms = stop - start;
 	std::printf( "%0.2f ms\n", elapsed_ms.count() / loops );
-}
+} // printCPUTime
 
 template<typename T>
 void printGPUTime( T startEvent, T stopEvent, int const & loops ) {
 	float elapsed_ms;
 	cudaEventElapsedTime( &elapsed_ms, startEvent, stopEvent );
 	std::printf( "%0.2f ms\n", elapsed_ms / loops );
-}
-
-void print( int const & n, float const * C ) {
-	for ( int i = 0; i < n; i++ ) {
-		for ( int j = 0; j < n; j++ ) {
-			printf( "%0.0f ", C[i * n + j] );
-		}
-		printf( "\n" );
-	}
-	printf( "\n" );
-}
+} // printGPUTime
 
 void verify( int const & n, float const * C_ref, float const * C_test ) {
 
@@ -65,7 +72,7 @@ void verify( int const & n, float const * C_ref, float const * C_test ) {
 		diff = C_test[i] - C_ref[i];
 		error_norm += diff * diff;
 		ref_norm += C_test[i] * C_test[i];
-	}
+	} // i
 
 	error_norm = static_cast<float>( std::sqrt( static_cast<double>( error_norm ) ) );
 	ref_norm = static_cast<float>( std::sqrt( static_cast<double>( ref_norm ) ) );
@@ -77,7 +84,7 @@ void verify( int const & n, float const * C_ref, float const * C_test ) {
 		std::printf( "Test passed.\n" );
 	else
 		std::printf( "Test failed.\n" );
-}
+} // verify
 
 void normalC(
 		int const & n,
@@ -88,7 +95,7 @@ void normalC(
 		float * C,
 		int const & loops ) {
 
-	auto start = startTimer();
+	auto start = getTimeCPU();
 
 	for ( int l = 0; l < loops; l++ ) {
 		for ( int i = 0; i < n; ++i ) {
@@ -98,17 +105,17 @@ void normalC(
 
 				for ( int k = 0; k < n; ++k ) {
 					prod += A[k * n + i] * B[j * n + k];
-				}
+				} // k
 
 				C[j * n + i] = alpha * prod + beta * C[j * n + i];
 			} // j
 		} // i
 	} // loops
 
-	auto end = stopTimer();
+	auto end = getTimeCPU();
 
-	printTime( start, end, loops );
-}
+	printCPUTime( start, end, loops );
+} // normalC
 
 void openMP(
 		int const & n,
@@ -122,7 +129,7 @@ void openMP(
 	// Request number of threads at runtime
 	omp_set_num_threads( 6 );
 
-	auto start = startTimer();
+	auto start = getTimeCPU();
 
 	for ( int l = 0; l < loops; l++ ) {
 
@@ -133,17 +140,17 @@ void openMP(
 				float prod = 0.0f;
 				for ( int k = 0; k < n; ++k ) {
 					prod += A[k * n + i] * B[j * n + k];
-				}
+				} // k
 
 				C[j * n + i] = alpha * prod + beta * C[j * n + i];
-			}
-		}
-	}
+			} // j
+		} // i
+	} // loops
 
-	auto end = stopTimer();
+	auto end = getTimeCPU();
 
-	printTime( start, end, loops );
-}
+	printCPUTime( start, end, loops );
+} // openMP
 
 void blas(
 		int const & n,
@@ -156,14 +163,14 @@ void blas(
 
 	openblas_set_num_threads( 6 );
 
-	auto start = startTimer();
+	auto start = getTimeCPU();
 
 	for ( int l = 0; l < loops; l++ )
 		cblas_sgemm( CblasRowMajor, CblasNoTrans, CblasNoTrans, n, n, n, alpha, A, n, B, n, beta, C, n );
-	auto end = stopTimer();
+	auto end = getTimeCPU();
 
-	printTime( start, end, loops );
-}
+	printCPUTime( start, end, loops );
+} // blas
 
 void openACC(
 		int const n,
@@ -185,13 +192,13 @@ void openACC(
 #pragma acc loop independent reduction(+:prod)
 				for ( int k = 0; k < n; ++k ) {
 					prod += A[k * n + i] * B[j * n + k];
-				}
+				} // k
 
 				C[j * n + i] = alpha * prod + beta * C[j * n + i];
-			}
-		}
-	}
-}
+			} // j
+		} // i
+	} // loops
+} // openACC
 
 void cublas(
 		int const & n,
@@ -232,7 +239,7 @@ void cublas(
 	cublasDestroy( handle );
 
 	printGPUTime( startEvent, stopEvent, loops );
-}
+} // cublas
 
 __global__ void cudaKernel(
 		int const n,
@@ -249,10 +256,10 @@ __global__ void cudaKernel(
 		// each thread computes one element of the block sub-matrix
 		for ( int i = 0; i < n; i++ ) {
 			tmpSum += A[row * n + i] * B[i * n + col];
-		}
+		} // i
 		C[row * n + col] = tmpSum;
-	}
-}
+	} // row & col
+} // cudaKernel
 
 void cuda(
 		int const & n,
@@ -295,19 +302,14 @@ void cuda(
 	cudaFree( d_C );
 
 	printGPUTime( startEvent, stopEvent, loops );
-}
+} // cuda
 
 int main( int argc, char** argv ) {
 
-	int n;
-	if ( argc < 2 ) {
-		n = 1024;
-		printf( "No input given.\n" );
-		printf( "Running with N = %d\n\n", n );
-	} else {
+	int n = 1024;
+	if ( argc > 1)
 		n = std::atoi( argv[1] );
-		printf( "Running with N = %d\n\n", n );
-	}
+	printf( "Running with N = %d\n\n", n );
 
 	float alpha = 1.0f;
 	float beta = 0.0f;
@@ -326,7 +328,7 @@ int main( int argc, char** argv ) {
 	for ( int i = 0; i < n * n; i++ ) {
 		h_A[i] = 2.0f;
 		h_B[i] = 1.0f;
-	}
+	} // i
 
 	// Benchmark normal C matrix multiplication
 	printf( "Running Normal C: " );
@@ -365,4 +367,4 @@ int main( int argc, char** argv ) {
 	delete[] ( h_C_acc );
 	delete[] ( h_C_cublas );
 	delete[] ( h_C_cuda );
-}
+} // main

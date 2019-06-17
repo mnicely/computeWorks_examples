@@ -1,59 +1,63 @@
+/*
+ * Copyright 1993-2019 NVIDIA Corporation.  All rights reserved.
+ *
+ * Please refer to the NVIDIA end user license agreement (EULA) associated
+ * with this source code for terms and conditions that govern your use of
+ * this software. Any use, reproduction, disclosure, or distribution of
+ * this software and related documentation outside the terms of the EULA
+ * is strictly prohibited.
+ *
+ */
+
+/* This header file includes helper functions. */
+
 #pragma once
 
-#include <chrono>		// std::chrono
-#include <cmath> 					// std::sqrt, std::fabs
-#include <cstdio>					// std::printf
-#include <cstdlib>				// std::atoi
-#include <stdexcept>			// std::runtime_error
+#include <chrono>			// std::chrono
+#include <cmath> 			// std::sqrt, std::fabs
+#include <cstdio>			// std::printf
+#include <cstdlib>			// std::atoi
 #include <cuda_runtime.h>	// CUDA runtime
 
-auto startTimer( ) {
+// Retrieve current with high resolution timer
+auto getTimeCPU( ) {
 	return ( std::chrono::high_resolution_clock::now() );
-}
+} // getTimeGPU
 
-auto stopTimer( ) {
-	return ( std::chrono::high_resolution_clock::now() );
-}
-
+// Set event to begin GPU timing
 auto startGPUTimer( ) {
 	cudaEvent_t startEvent = nullptr;
 	cudaEventCreate( &startEvent, cudaEventBlockingSync );
 	cudaEventRecord( startEvent );
 	return ( startEvent );
-}
+} // startGPUTimer
 
+// Set event to end GPU timing
 auto stopGPUTimer( ) {
 	cudaEvent_t stopEvent = nullptr;
 	cudaEventCreate( &stopEvent, cudaEventBlockingSync );
 	cudaEventRecord( stopEvent );
 	cudaEventSynchronize( stopEvent );
 	return ( stopEvent );
-}
+} // stopGPUTimer
 
+// Print function for CPU timing
 template<typename T>
-void printTime( T start, T stop, int const & loops ) {
+void printCPUTime( T start, T stop, int const & loops ) {
 	std::chrono::duration<double, std::milli> elapsed_ms;
 	elapsed_ms = stop - start;
 	std::printf( "%0.2f ms\n", elapsed_ms.count() / loops );
-}
+} // printCPUTime
 
+// Print function for GPU timing
 template<typename T>
 void printGPUTime( T startEvent, T stopEvent, int const & loops ) {
 	float elapsed_ms;
 	cudaEventElapsedTime( &elapsed_ms, startEvent, stopEvent );
 	std::printf( "%0.2f ms\n", elapsed_ms / loops );
-}
+} // printGPUTime
 
-void print( int const & n, float const * C ) {
-	for ( int i = 0; i < n; i++ ) {
-		for ( int j = 0; j < n; j++ ) {
-			printf( "%0.0f ", C[i * n + j] );
-		}
-		printf( "\n" );
-	}
-	printf( "\n" );
-}
-
+// Verify input matrices
 void verify( int const & n, float const * C_ref, float const * C_test ) {
 
 	// Check result against reference
@@ -65,7 +69,7 @@ void verify( int const & n, float const * C_ref, float const * C_test ) {
 		diff = C_test[i] - C_ref[i];
 		error_norm += diff * diff;
 		ref_norm += C_test[i] * C_test[i];
-	}
+	} // i
 
 	error_norm = static_cast<float>( std::sqrt( static_cast<double>( error_norm ) ) );
 	ref_norm = static_cast<float>( std::sqrt( static_cast<double>( ref_norm ) ) );
@@ -77,4 +81,4 @@ void verify( int const & n, float const * C_ref, float const * C_test ) {
 		std::printf( "Test passed.\n" );
 	else
 		std::printf( "Test failed.\n" );
-}
+} // verify

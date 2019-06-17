@@ -1,3 +1,22 @@
+/*
+ * Copyright 1993-2019 NVIDIA Corporation.  All rights reserved.
+ *
+ * Please refer to the NVIDIA end user license agreement (EULA) associated
+ * with this source code for terms and conditions that govern your use of
+ * this software. Any use, reproduction, disclosure, or distribution of
+ * this software and related documentation outside the terms of the EULA
+ * is strictly prohibited.
+ */
+
+/*
+ * This sample demonstrates performance of a naive implementation of
+ * a serial matrix multiplication.
+ */
+
+/*
+ * nvcc -O2 normal_C.app -o normal_C -run
+ */
+
 #include "helper.h"
 
 void normalC(
@@ -9,39 +28,31 @@ void normalC(
 		float * C,
 		int const & loops ) {
 
-	auto start = startTimer();
+	auto start = getTimeCPU();
 
 	for ( int l = 0; l < loops; l++ ) {
 		for ( int i = 0; i < n; ++i ) {
 			for ( int j = 0; j < n; ++j ) {
-
 				float prod = 0.0f;
-
 				for ( int k = 0; k < n; ++k ) {
 					prod += A[k * n + i] * B[j * n + k];
-				}
-
+				} // k
 				C[j * n + i] = alpha * prod + beta * C[j * n + i];
 			} // j
 		} // i
 	} // loops
 
-	auto end = stopTimer();
+	auto end = getTimeCPU();
 
-	printTime( start, end, loops );
-}
+	printCPUTime( start, end, loops );
+} // normalC
 
 int main( int argc, char** argv ) {
 
-	int n;
-	if ( argc < 2 ) {
-		n = 1024;
-		printf( "No input given.\n" );
-		printf( "Running with N = %d\n\n", n );
-	} else {
+	int n = 1024;
+	if ( argc > 1)
 		n = std::atoi( argv[1] );
-		printf( "Running with N = %d\n\n", n );
-	}
+	printf( "Running with N = %d\n\n", n );
 
 	float alpha = 1.0f;
 	float beta = 0.0f;
@@ -55,7 +66,7 @@ int main( int argc, char** argv ) {
 	for ( int i = 0; i < n * n; i++ ) {
 		h_A[i] = 2.0f;
 		h_B[i] = 1.0f;
-	}
+	} // i
 
 	// Benchmark normal C matrix multiplication
 	printf( "Running Normal C: " );
@@ -65,4 +76,4 @@ int main( int argc, char** argv ) {
 	delete[] ( h_A );
 	delete[] ( h_B );
 	delete[] ( h_C );
-}
+} // main

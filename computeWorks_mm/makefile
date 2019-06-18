@@ -9,7 +9,7 @@ OBJ			= o
 NVCCFLAGS	= -gencode arch=compute_70,code=sm_70 -gencode arch=compute_70,code=compute_70
 CXXFLAGS	= -O2
 ACCLINK		= -Xlinker "-Bstatic -lblas -Bdynamic"
-ACCFLAGS	= -Xcompiler "-V19.4 -Bstatic_pgi -acc -mp -ta=tesla:nordc -Mcuda -Minfo=accel -ta=time"
+ACCFLAGS	= -Xcompiler "-V19.4 -Bstatic_pgi -acc -mp -Mcuda -Minfo=accel -ta=tesla:nordc -ta=time"
 LDFLAGS		= -L$(PGI_PATH)/lib
 INCLUDE		=
 LIBS		= -lcublas
@@ -17,7 +17,7 @@ LIBS		= -lcublas
 all: computeWorks_mm 
 
 computeWorks_mm: src/computeWorks_mm.cu
-	$(CUDAC) -x cu -ccbin $(CXX) $(CXXFLAGS) $(LDFLAGS) $(LIBS) $(ACCLINK) $(ACCFLAGS) $(NVCCFLAGS) -o $(EXE) $<
+	$(CUDAC) -x cu -rdc=true -ccbin $(CXX) $(CXXFLAGS) $(LDFLAGS) $(LIBS) $(ACCLINK) $(ACCFLAGS) $(NVCCFLAGS) -o $(EXE) $<
 
 clean:
 	@echo 'Cleaning up...'

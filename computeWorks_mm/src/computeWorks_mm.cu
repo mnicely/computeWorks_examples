@@ -106,7 +106,6 @@ void normalC(
 				for ( int k = 0; k < n; ++k ) {
 					prod += A[k * n + i] * B[j * n + k];
 				} // k
-
 				C[j * n + i] = alpha * prod + beta * C[j * n + i];
 			} // j
 		} // i
@@ -141,7 +140,6 @@ void openMP(
 				for ( int k = 0; k < n; ++k ) {
 					prod += A[k * n + i] * B[j * n + k];
 				} // k
-
 				C[j * n + i] = alpha * prod + beta * C[j * n + i];
 			} // j
 		} // i
@@ -193,7 +191,6 @@ void openACC(
 				for ( int k = 0; k < n; ++k ) {
 					prod += A[k * n + i] * B[j * n + k];
 				} // k
-
 				C[j * n + i] = alpha * prod + beta * C[j * n + i];
 			} // j
 		} // i

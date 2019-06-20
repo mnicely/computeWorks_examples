@@ -10,13 +10,19 @@
 
 /*
  * This sample compares performance between serial matrix multiplication and
- * OpenMP.
+ * OpenMP. The number of OpenMP threads can by setting the environment variable
+ * OMP_NUM_THREADS, using export OMP_NUM_THREADS=X, where X is the number of
+ * CPU threads you wish to use. The environment variable can be ignored by 
+ * using the runtime command omp_set_num_threads ( X ), where X is the number
+ * of CPU threads you wish to use. You must include omp.h in order to use
+ * runtime commands.
  */
 
 /*
  * nvcc -ccbin pgc++ -O2 -Xcompiler "-V19.4 -mp" openmp.cpp -o openmp -run
  */
-#include <omp.h>
+
+//#include <omp.h>
 #include "helper.h"
 
 void normalC(
@@ -57,18 +63,20 @@ void openMP(
 		int const & loops ) {
 
 	// Request number of threads at runtime
-	omp_set_num_threads( 6 );
+//	omp_set_num_threads( 4 );
 
 	auto start = getTimeCPU();
 
 	for ( int l = 0; l < loops; l++ ) {
+        
+        int i, j, k;
 
 		// Create parallel region and worksharing
-#pragma omp parallel for shared(A, B, C, n) schedule(static)
-		for ( int i = 0; i < n; ++i ) {
-			for ( int j = 0; j < n; ++j ) {
+#pragma omp parallel for shared(A, B, C, n) private(i, j, k) schedule(static)
+		for ( i = 0; i < n; ++i ) {
+			for ( j = 0; j < n; ++j ) {
 				float prod = 0.0f;
-				for ( int k = 0; k < n; ++k ) {
+				for ( k = 0; k < n; ++k ) {
 					prod += A[k * n + i] * B[j * n + k];
 				} // k
 				C[j * n + i] = alpha * prod + beta * C[j * n + i];

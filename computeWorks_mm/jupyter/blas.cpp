@@ -58,7 +58,7 @@ void blas(
 		float * C,
 		int const & loops ) {
 
-	openblas_set_num_threads( 6 );
+	//openblas_set_num_threads( 6 );
 
 	auto start = getTimeCPU();
 

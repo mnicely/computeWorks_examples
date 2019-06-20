@@ -92,7 +92,7 @@ void cublas(
 int main( int argc, char** argv ) {
 
 	int n = 1024;
-	if ( argc > 1)
+	if ( argc > 1 )
 		n = std::atoi( argv[1] );
 	printf( "Running with N = %d\n\n", n );
 

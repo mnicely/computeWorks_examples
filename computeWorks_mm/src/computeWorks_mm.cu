@@ -26,7 +26,11 @@
 #include <stdexcept>	// std::runtime_error
 #include <omp.h>		// OpenMP - PGI
 #include <cblas.h>		// OpenBLAS - PGI
+#include <cooperative_groups.h> // Cooperative Groups
 #include <cublas_v2.h>	// cuBLAS
+
+// Thread block size
+#define BLOCK_SIZE 32
 
 auto getTimeCPU( ) {
 	return ( std::chrono::high_resolution_clock::now() );
@@ -238,25 +242,63 @@ void cublas(
 	printGPUTime( startEvent, stopEvent, loops );
 } // cublas
 
-__global__ void cudaKernel(
+__global__ void MatMulKernel(
 		int const n,
 		float const * __restrict__ A,
 		float const * __restrict__ B,
 		float * __restrict__ C ) {
 
-	int row = blockIdx.y * blockDim.y + threadIdx.y;
-	int col = blockIdx.x * blockDim.x + threadIdx.x;
+	auto const block = cooperative_groups::this_thread_block();
 
-	float tmpSum = 0;
+	// Block row and column
+	int blockRow = blockIdx.y;
+	int blockCol = blockIdx.x;
 
-	if ( row < n && col < n ) {
-		// each thread computes one element of the block sub-matrix
-		for ( int i = 0; i < n; i++ ) {
-			tmpSum += A[row * n + i] * B[i * n + col];
-		} // i
-		C[row * n + col] = tmpSum;
-	} // row & col
-} // cudaKernel
+	// Each thread computes one element of Csub by accumulating results into Cvalue
+	float Cvalue = 0.0f;
+
+	// Thread row and column within Csub
+	int row = threadIdx.y;
+	int col = threadIdx.x;
+
+	// Each thread block computes one sub-matrix Csub of C
+	float * Csub = &C[n * BLOCK_SIZE * blockRow + BLOCK_SIZE * blockCol];
+
+	// Loop over all the sub-matrices of A and B that are required to compute Csub
+	// Multiply each pair of sub-matrices together and accumulate the results
+	for ( int m = 0; m < ( n / BLOCK_SIZE ); ++m ) {
+
+		// Get sub-matrix Asub of A
+		float const * Asub = &A[n * BLOCK_SIZE * blockRow + BLOCK_SIZE * m];
+
+		// Get sub-matrix Bsub of B
+		float const * Bsub = &B[n * BLOCK_SIZE * m + BLOCK_SIZE * blockCol];
+
+		// Shared memory used to store Asub and Bsub respectively
+		__shared__ float As[BLOCK_SIZE][BLOCK_SIZE];
+		__shared__ float Bs[BLOCK_SIZE][BLOCK_SIZE];
+
+		// Load Asub and Bsub from device memory to shared memory
+		// Each thread loads one element of each sub-matrix
+		As[row][col] = Asub[row * n + col];
+		Bs[row][col] = Bsub[row * n + col];
+
+		// Synchronize to make sure the sub-matrices are loaded
+		// before starting the computation
+		block.sync();
+
+		// Multiply Asub and Bsub together
+		for ( int e = 0; e < BLOCK_SIZE; ++e )
+			Cvalue += As[row][e] * Bs[e][col];
+
+		// Synchronize to make sure that the preceding computation is done
+		// before loading two new sub-matrices of A and B in the next iteration
+		block.sync();
+	} // m
+
+	// Write Csub to device memory each thread writes one element
+	Csub[row * n + col] = Cvalue;
+} // MatMulKernel
 
 void cuda(
 		int const & n,
@@ -280,13 +322,12 @@ void cuda(
 	cudaMemcpy( d_B, B, sizeof(float) * n * n, cudaMemcpyHostToDevice );
 
 	// setup the dimensions
-	int threads = 16;
-	dim3 blocksPerGrid( ( n + threads - 1 ) / threads, ( n + threads - 1 ) / threads );
-	dim3 threadsPerBlock( threads, threads );
+	dim3 blocksPerGrid( ( n + BLOCK_SIZE - 1 ) / BLOCK_SIZE, ( n + BLOCK_SIZE - 1 ) / BLOCK_SIZE );
+	dim3 threadsPerBlock( BLOCK_SIZE, BLOCK_SIZE );
 
 	auto startEvent = startGPUTimer();
 	for ( int l = 0; l < loops; l++ )
-		cudaKernel<<<blocksPerGrid, threadsPerBlock>>>(n, d_A, d_B, d_C);
+		MatMulKernel<<<blocksPerGrid, threadsPerBlock>>>(n, d_A, d_B, d_C);
 	auto stopEvent = stopGPUTimer();
 
 	cudaDeviceSynchronize();
@@ -304,7 +345,7 @@ void cuda(
 int main( int argc, char** argv ) {
 
 	int n = 1024;
-	if ( argc > 1)
+	if ( argc > 1 )
 		n = std::atoi( argv[1] );
 	printf( "Running with N = %d\n\n", n );
 

@@ -11,7 +11,7 @@
             			
             <provider-reference id="org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider" ref="shared-provider"/>
             			
-            <provider class="com.nvidia.cuda.toolchain.internal.NVCCBuiltinSpecsDetector" console="false" env-hash="9193822007207146790" id="com.nvidia.cuda.toolchain.CUDACProvider" keep-relative-paths="false" name="Nvcc Builtins provider" parameter="${COMMAND} ${FLAGS} -E -Xcompiler -P -Xcompiler -v -Xcompiler -dD &quot;${INPUTS}&quot;" prefer-non-shared="true">
+            <provider class="com.nvidia.cuda.toolchain.internal.NVCCBuiltinSpecsDetector" console="false" env-hash="3939171229426632882" id="com.nvidia.cuda.toolchain.CUDACProvider" keep-relative-paths="false" name="Nvcc Builtins provider" parameter="${COMMAND} ${FLAGS} -E -Xcompiler -P -Xcompiler -v -Xcompiler -dD &quot;${INPUTS}&quot;" prefer-non-shared="true">
                 				
                 <language-scope id="com.nvidia.cuda.toolchain.language.cuda.c"/>
                 				
@@ -35,7 +35,7 @@
             			
             <provider-reference id="org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider" ref="shared-provider"/>
             			
-            <provider class="com.nvidia.cuda.toolchain.internal.NVCCBuiltinSpecsDetector" console="false" env-hash="5557071895997620671" id="com.nvidia.cuda.toolchain.CUDACProvider" keep-relative-paths="false" name="Nvcc Builtins provider" parameter="${COMMAND} ${FLAGS} -E -Xcompiler -P -Xcompiler -v -Xcompiler -dD &quot;${INPUTS}&quot;" prefer-non-shared="true">
+            <provider class="com.nvidia.cuda.toolchain.internal.NVCCBuiltinSpecsDetector" console="false" env-hash="-5865419082154393863" id="com.nvidia.cuda.toolchain.CUDACProvider" keep-relative-paths="false" name="Nvcc Builtins provider" parameter="${COMMAND} ${FLAGS} -E -Xcompiler -P -Xcompiler -v -Xcompiler -dD &quot;${INPUTS}&quot;" prefer-non-shared="true">
                 				
                 <language-scope id="com.nvidia.cuda.toolchain.language.cuda.c"/>
                 				

@@ -140,7 +140,9 @@ void openMP(
 #pragma omp parallel for shared(A, B, C, n) schedule(static)
 		for ( int i = 0; i < n; ++i ) {
 			for ( int j = 0; j < n; ++j ) {
+
 				float prod = 0.0f;
+
 				for ( int k = 0; k < n; ++k ) {
 					prod += A[k * n + i] * B[j * n + k];
 				} // k
@@ -168,7 +170,8 @@ void blas(
 	auto start = getTimeCPU();
 
 	for ( int l = 0; l < loops; l++ )
-		cblas_sgemm( CblasRowMajor, CblasNoTrans, CblasNoTrans, n, n, n, alpha, A, n, B, n, beta, C, n );
+		cblas_sgemm( CblasRowMajor, CblasNoTrans, CblasNoTrans, n, n, n, alpha,
+				A, n, B, n, beta, C, n );
 	auto end = getTimeCPU();
 
 	printCPUTime( start, end, loops );
@@ -190,7 +193,9 @@ void openACC(
 		for ( int i = 0; i < n; ++i ) {
 #pragma acc loop independent
 			for ( int j = 0; j < n; ++j ) {
+
 				float prod = 0.0f;
+
 #pragma acc loop independent reduction(+:prod)
 				for ( int k = 0; k < n; ++k ) {
 					prod += A[k * n + i] * B[j * n + k];
@@ -226,7 +231,8 @@ void cublas(
 
 	auto startEvent = startGPUTimer();
 	for ( int l = 0; l < loops; l++ )
-		cublasSgemm( handle, CUBLAS_OP_N, CUBLAS_OP_N, n, n, n, &alpha, d_A, n, d_B, n, &beta, d_C, n );
+		cublasSgemm( handle, CUBLAS_OP_N, CUBLAS_OP_N, n, n, n, &alpha,
+				d_A, n, d_B, n, &beta, d_C, n );
 	auto stopEvent = stopGPUTimer();
 
 	cudaDeviceSynchronize();

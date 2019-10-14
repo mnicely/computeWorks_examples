@@ -35,8 +35,7 @@ reboot
 
 ## Installation
 ### CUDA -> [more details](https://docs.nvidia.com/cuda/cuda-quick-start-guide/index.html#ubuntu-x86_64-deb)
-1. Download [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu&target_version=1804&target_type=deblocal)
-2. Install
+1. Install [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu&target_version=1804&target_type=deblocal)
 ```bash 
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-ubuntu1804.pin
 sudo mv cuda-ubuntu1804.pin /etc/apt/preferences.d/cuda-repository-pin-600
@@ -46,7 +45,7 @@ sudo apt-key add /var/cuda-repo-10-1-local-10.1.243-418.87.00/7fa2af80.pub
 sudo apt-get update
 sudo apt-get install cuda -y
 ```
-3. Add paths to *~/.bashrc*
+2. Add paths to *~/.bashrc*
 ```bash
 echo -e "\n# CUDA paths" >> ~/.bashrc
 echo -e "export PATH=/usr/local/cuda/bin${PATH:+:${PATH}}" >> ~/.bashrc

@@ -163,6 +163,7 @@ sudo nano /etc/docker/daemon.json
 }
 ```
 ```bash
+mkdir -p ~/.docker
 sudo service docker restart
 ```
 6. Verify you can launch docker container with access to GPU

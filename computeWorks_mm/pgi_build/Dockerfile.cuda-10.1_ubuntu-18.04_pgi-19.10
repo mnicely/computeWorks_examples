@@ -2,7 +2,7 @@ FROM nvcr.io/nvidia/cuda:latest
 
 ##################################################################################################
 ## Run the following command to build Docker images                                             ##
-## docker build -t pgi_19.4 -f Dockerfile.cuda-10.1_ubuntu-18.04_pgi-19.4 .                     ##
+## docker build -t pgi_19.10 -f Dockerfile.cuda-10.1_ubuntu-18.04_pgi-19.10 .                     ##
 ##################################################################################################
 ## To use --squash, experimental must be set in Docker settings                                 ##
 ## Modify /etc/docker/daemon.json                                                               ##
@@ -24,7 +24,7 @@ FROM nvcr.io/nvidia/cuda:latest
 ## Run the following command to start Docker image                                              ##
 ## docker run -it --rm --runtime=nvidia --name pgi \                                            ##
 ##			-v /home/<whoami>/<computeWorks_mm dir>:/computeWorks_mm \                          ##
-##			-w /computeWorks_mm pgi_19.4:latest /bin/bash                                       ##
+##			-w /computeWorks_mm pgi_19.10:latest /bin/bash                                       ##
 ##                                                                                              ##
 ## Once in the Docker image, run nvidia-smi to confirm you have access to the GPUs              ##
 ##                                                                                              ##
@@ -35,7 +35,7 @@ SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install PGI
-ENV PGI_VERSION 19.4
+ENV PGI_VERSION 19.10
 ENV PGI_INSTALL_DIR /opt/pgi
 ENV PGI_HOME    ${PGI_INSTALL_DIR}/linux86-64/${PGI_VERSION}
 ENV PGI_BIN_DIR ${PGI_HOME}/bin
@@ -47,7 +47,7 @@ ENV PGI_MAN_DIR ${PGI_HOME}/man
 ## https://www.pgroup.com/support/download_community.php?file=pgi-community-linux-x64
 ## Place in current directory
 ## Modify file below based on your download
-ADD pgilinux-2019-194-x86-64.tar.gz /tmp
+ADD pgilinux-2019-1910-x86-64.tar.gz /tmp
 
 RUN export PGI_SILENT=true && \
     export PGI_ACCEPT_EULA=accept && \
@@ -68,5 +68,5 @@ ENV MANPATH         ${PGI_MAN_DIR}:${MANPATH}
 ENV PGI_ACC_TIME=1
 
 ## Labels
-LABEL pgi_version "2019.4"
+LABEL pgi_version "2019.10"
 

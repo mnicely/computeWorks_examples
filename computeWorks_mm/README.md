@@ -4,7 +4,7 @@ Matrix multiplication example performed with OpenMP, OpenACC, BLAS, cuBLAS, and 
 ## Getting Started
 This example requires the following packages:
 - CUDA Toolkit 10.1
-- PGI CE Compiler 19.10
+- PGI CE Compiler 19.4
 
 Optional:
 - Eclipse IDE C/C++

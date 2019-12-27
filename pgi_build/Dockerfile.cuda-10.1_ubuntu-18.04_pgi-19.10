@@ -24,7 +24,7 @@ FROM nvcr.io/nvidia/cuda:latest
 ## Run the following command to start Docker image                                              ##
 ## docker run -it --rm --runtime=nvidia --name pgi \                                            ##
 ##			-v /home/<whoami>/<computeWorks_mm dir>:/computeWorks_mm \                          ##
-##			-w /computeWorks_mm pgi_19.10:latest /bin/bash                                       ##
+##			-w /computeWorks_mm pgi_19.10:latest /bin/bash                                      ##
 ##                                                                                              ##
 ## Once in the Docker image, run nvidia-smi to confirm you have access to the GPUs              ##
 ##                                                                                              ##

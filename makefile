@@ -1,15 +1,15 @@
 EXE			= computeWorks_mm
 CUDA		= 10.1
-PGI			= 19.4
+PGI			= 19.10
 CUDA_PATH 	= /usr/local/cuda-$(CUDA)
-PGI_PATH	= /opt/pgi/linux86-64-llvm/$(PGI)
+PGI_PATH	= /opt/pgi/linux86-64-nollvm/$(PGI)
 CUDAC		= $(CUDA_PATH)/bin/nvcc
 CXX			= $(PGI_PATH)/bin/pgc++
 OBJ			= o
 NVCCFLAGS	= -gencode arch=compute_70,code=sm_70 -gencode arch=compute_70,code=compute_70
 CXXFLAGS	= -O2
 ACCLINK		= -Xlinker "-Bstatic -lblas -Bdynamic"
-ACCFLAGS	= -Xcompiler "-V19.4 -Bstatic_pgi -acc -mp -Mcuda -Minfo=accel -ta=tesla:nordc -ta=time"
+ACCFLAGS	= -Xcompiler "-V$(PGI) -Bstatic_pgi -acc -mp -Mcuda -Minfo=accel -ta=tesla:nordc -ta=time"
 LDFLAGS		= -L$(PGI_PATH)/lib
 INCLUDE		=
 LIBS		= -lcublas

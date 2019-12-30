@@ -9,12 +9,12 @@ AFLAGS		:=-V$(PGI_V) -acc -Mcuda -Minfo=accel -ta=tesla:cc70 -ta=time
 ARCHES		:=-gencode arch=compute_70,code=\"compute_70,sm_70\"
 INC_DIR		:=
 LIB_DIR		:=
-SRC_DIR		:= ../src
+SRC_DIR		:= src
 
 SOURCES = 	cuda \
 			blas \
 			cublas \
-			normal_C \
+			serial \
 			openacc \
 			openmp
 
@@ -30,7 +30,7 @@ blas: $(SRC_DIR)/blas.cpp
 cublas: $(SRC_DIR)/cublas.cpp
 	$(NVCC) -x cu $(NFLAGS) $(INC_DIR) $(LIB_DIR)$^ -o $@ -lcublas
 	
-normal_C: $(SRC_DIR)/normal_C.cpp
+serial: $(SRC_DIR)/serial.cpp
 	$(CPP) $(CFLAGS) $(INC_DIR) $(LIB_DIR)$^ -o $@ $(LIBS)
 	
 openacc: $(SRC_DIR)/openacc.cpp

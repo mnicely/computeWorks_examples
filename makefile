@@ -1,24 +1,51 @@
-EXE			= computeWorks_mm
-CUDA		= 10.1
-PGI			= 19.10
-CUDA_PATH 	= /usr/local/cuda-$(CUDA)
-PGI_PATH	= /opt/pgi/linux86-64-nollvm/$(PGI)
-CUDAC		= $(CUDA_PATH)/bin/nvcc
-CXX			= $(PGI_PATH)/bin/pgc++
-OBJ			= o
-NVCCFLAGS	= -gencode arch=compute_70,code=sm_70 -gencode arch=compute_70,code=compute_70
-CXXFLAGS	= -O2
-ACCLINK		= -Xlinker "-Bstatic -lblas -Bdynamic"
-ACCFLAGS	= -Xcompiler "-V$(PGI) -Bstatic_pgi -acc -mp -Mcuda -Minfo=accel -ta=tesla:nordc -ta=time"
-LDFLAGS		= -L$(PGI_PATH)/lib
-INCLUDE		=
-LIBS		= -lcublas
+CUDA_V		:=10.1
+PGI_V		:=19.10
+CPP		:=g++
+NVCC		:=/usr/local/cuda-$(CUDA_V)/bin/nvcc
+PGI		:=/opt/pgi/linux86-64-llvm/$(PGI_V)/bin/pgc++
+CFLAGS		:=-O3 -std=c++14
+PGIFLAGS	:=-V$(PGI_V) -acc -Mcuda:cuda$(CUDA_V) -Minfo=accel -ta=tesla:cc70 -ta=time
+ARCHES		:=-gencode arch=compute_70,code=\"compute_70,sm_70\"
+LIBS		:=-lopenblas -lcudart -lcublas
+SRCDIR		:=./src
+OBJDIR		:=obj
 
-all: computeWorks_mm 
+SOURCES := 	computeWorks_mm \
+		blas \
+		cublas \
+		cuda \
+		openacc \
+		openmp
 
-computeWorks_mm: src/computeWorks_mm.cu
-	$(CUDAC) -x cu -rdc=true -ccbin $(CXX) $(CXXFLAGS) $(LDFLAGS) $(LIBS) $(ACCLINK) $(ACCFLAGS) $(NVCCFLAGS) -o $(EXE) $<
+OBJECTS=$(addprefix $(OBJDIR)/, $(SOURCES:%=%.o))
 
+all: build computeWorks_mm
+.PHONY: all
+
+build:	
+	@mkdir -p $(OBJDIR)
+	
+computeWorks_mm: $(OBJECTS)
+	$(PGI) $(PGIFLAGS) $(LIBS) $(OBJECTS)  -o $@
+	
+$(OBJDIR)/computeWorks_mm.o: $(SRCDIR)/computeWorks_mm.cpp
+	$(NVCC) -x cu -ccbin $(CPP) $(CFLAGS) -c $^ -o $@
+	
+$(OBJDIR)/blas.o: $(SRCDIR)/blas.cpp
+	$(NVCC) -x cu -ccbin $(CPP) $(CFLAGS) -c $^ -o $@
+	
+$(OBJDIR)/cublas.o: $(SRCDIR)/cublas.cpp
+	$(NVCC) -x cu -ccbin $(CPP) -cudart=static $(CFLAGS) -I/usr/local/cuda/samples/common/inc ${ARCHES} -c $^ -o $@ -lcublas
+	
+$(OBJDIR)/cuda.o: $(SRCDIR)/cuda.cu
+	$(NVCC) -ccbin $(CPP) -cudart=static $(CFLAGS) -I/usr/local/cuda/samples/common/inc ${ARCHES} -c $^ -o $@
+	
+$(OBJDIR)/openacc.o: $(SRCDIR)/openacc.cpp
+	$(PGI) $(PGIFLAGS) $(CFLAGS) -c $^ -o $@
+	
+$(OBJDIR)/openmp.o: $(SRCDIR)/openmp.cpp
+	$(NVCC) -x cu -ccbin $(CPP) -Xcompiler -fopenmp -c $^ -o $@
+	
 clean:
 	@echo 'Cleaning up...'
-	@rm -rf $(EXE) *.$(OBJ)
+	@rm -rf $(SOURCES) $(OBJDIR)/*.o

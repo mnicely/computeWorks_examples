@@ -33,37 +33,15 @@
  * the above Disclaimer and U.S. Government End Users Notice.
  */
 
-/*
- * This sample compares performance between serial matrix multiplication and
- * BLAS.
- */
+#ifndef CUDA_CUH_
+#define CUDA_CUH_
 
-/*
- * nvcc -ccbin pgc++ -O2 -Xlinker "-lblas" -Xcompiler "V19.4"
- * blas.cpp -o blas -run
- */
-
-#include <cblas.h>
-
-#include "blas.h"
-#include "timer.h"
-
-void blas( int const &  n,
+void cuda( int const &  n,
            float const &alpha,
            float const *A,
            float const *B,
            float const &beta,
            float *      C,
-           int const &  loops ) {
+           int const &  loops );
 
-    // Timer
-    Timer timer {};
-
-    timer.startCPUTimer( );
-
-    for ( int l = 0; l < loops; l++ )
-        cblas_sgemm( CblasRowMajor, CblasNoTrans, CblasNoTrans, n, n, n, alpha, A, n, B, n, beta, C, n );
-
-    timer.stopAndPrintCPU( loops );
-
-} // blas
+#endif /* CUDA_CUH_ */

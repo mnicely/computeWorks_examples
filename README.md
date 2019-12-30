@@ -272,8 +272,3 @@ eclipse &
 cd computeWorks_examples/computeWorks_mm/jupyter
 jupyter-notebook computeWorks_mm.ipynb
 ```
-
-## Cloud Usage
-You can ulitize the [PGI AMI on Amazon Web Services](https://www.pgroup.com/products/pgi-in-the-cloud.htm) if you don't have access to a local NVIDIA GPU.
-1. Sign up for a [basic plan](https://aws.amazon.com/marketplace/pp/B07GC4J8VG/ref=_ptnr_pgi_ste)
-2. Once AWS account has been setup, you can request the NVIDIA offer to use the tool set.

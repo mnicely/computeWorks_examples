@@ -52,7 +52,7 @@ echo -e "export LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64${LD_LIBRARY_P
 ```
 - The CUPTI directory is required for OpenACC profiling
 
-### PGI Community Edition (Bare Metal) -> [more details](https://www.pgroup.com/resources/docs/19.4/x86/pgi-install-guide/index.htm#install-linux-pgi)
+### PGI Community Edition (Bare Metal) -> [more details](https://www.pgroup.com/resources/docs/19.10/x86/pgi-install-guide/index.htm#install-linux-pgi)
 
 **Skip this step if you prefer to run utilize the PGI compiler in a Docker container.**
 
@@ -76,8 +76,8 @@ rm -rf ~/Downloads/tmp
 ```bash
 echo -e "\n# PGI paths" >> ~/.bashrc
 echo -e "export PGI=/opt/pgi" >> ~/.bashrc
-echo -e "export PATH=/opt/pgi/linux86-64/19.4/bin:$PATH" >> ~/.bashrc
-echo -e "export MANPATH=$MANPATH:/opt/pgi/linux86-64/19.4/man" >> ~/.bashrc
+echo -e "export PATH=/opt/pgi/linux86-64/19.10/bin:$PATH" >> ~/.bashrc
+echo -e "export MANPATH=$MANPATH:/opt/pgi/linux86-64/19.10/man" >> ~/.bashrc
 echo -e "export LM_LICENSE_FILE=$LM_LICENSE_FILE:/opt/pgi/license.dat" >> ~/.bashrc
 ```
 
@@ -184,7 +184,7 @@ cp ~/Downloads/pgilinux-2019-194-x86-64.tar.gz .
 ```
 4. Build PGI Docker image
 ```bash
-docker build -t cuda-10.1_ubuntu-18.04_pgi-19.4 -f Dockerfile.cuda-10.1_ubuntu-18.04_pgi-19.4 .
+docker build -t cuda-10.1_ubuntu-18.04_pgi-19.10 -f Dockerfile.cuda-10.1_ubuntu-18.04_pgi-19.10 .
 ```
 
 ### Jupyter Notebook
@@ -224,11 +224,11 @@ cd computeWorks_examples/computeWorks_mm
 ```
 2. Build _computeWorks_mm_ binary
 ```bash
-docker run --runtime=nvidia --rm -v $(pwd):/workspace -w /workspace cuda-10.1_ubuntu-18.04_pgi-19.4:latest make
+docker run --runtime=nvidia --rm -v $(pwd):/workspace -w /workspace cuda-10.1_ubuntu-18.04_pgi-19.10:latest make
 ```
 3. Run _computeWorks_mm_ <matrixSize | default=1024>
 ```bash
-docker run --runtime=nvidia --rm -v $(pwd):/workspace -w /workspace cuda-10.1_ubuntu-18.04_pgi-19.4:latest ./computeWorks_mm 128
+docker run --runtime=nvidia --rm -v $(pwd):/workspace -w /workspace cuda-10.1_ubuntu-18.04_pgi-19.10:latest ./computeWorks_mm 128
 ```
 
 ### Eclipse IDE C/C++
@@ -261,7 +261,7 @@ eclipse &
   - Right click  _computeWorks_mm_ -> Properties
   - C/C++ Build -> Settings
   - **Settings** -> Container Settings -> _select_ Build inside Docker Image
-  - Image -> cuda-10.1_ubuntu-18.04_pgi-19.4:latest
+  - Image -> cuda-10.1_ubuntu-18.04_pgi-19.10:latest
 4. Run Project
   - Right click _computeWorks_mm_ -> Run As -> Local C/C++ Application
 

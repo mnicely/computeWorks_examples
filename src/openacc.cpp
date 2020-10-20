@@ -66,9 +66,9 @@ void openACC( int const    n,
 #pragma acc loop independent reduction( + : prod )
                 for ( int k = 0; k < n; ++k ) {
                     prod += A[k * n + i] * B[j * n + k];
-                } // k
+                }  // k
                 C[j * n + i] = alpha * prod + beta * C[j * n + i];
-            } // j
-        }     // i
-    }         // loops
-} // openACC
+            }  // j
+        }      // i
+    }          // loops
+}  // openACC

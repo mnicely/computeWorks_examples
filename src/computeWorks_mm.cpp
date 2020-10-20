@@ -39,9 +39,9 @@
  */
 
 #include <chrono>
-#include <cmath> // std::sqrt, std::fabs
+#include <cmath>  // std::sqrt, std::fabs
 #include <cstdio>
-#include <cstdlib> // std::atoi
+#include <cstdlib>  // std::atoi
 
 #include "blas.h"
 #include "cublas.h"
@@ -61,7 +61,7 @@ void verify( int const &n, float const *C_ref, float const *C_test ) {
         diff = C_test[i] - C_ref[i];
         error_norm += diff * diff;
         ref_norm += C_test[i] * C_test[i];
-    } // i
+    }  // i
 
     error_norm = static_cast<float>( std::sqrt( static_cast<double>( error_norm ) ) );
     ref_norm   = static_cast<float>( std::sqrt( static_cast<double>( ref_norm ) ) );
@@ -73,7 +73,7 @@ void verify( int const &n, float const *C_ref, float const *C_test ) {
         std::printf( "--> Test passed.\n" );
     else
         std::printf( "--> Test failed.\n" );
-} // verify
+}  // verify
 
 void serial( int const &  n,
              float const &alpha,
@@ -94,16 +94,16 @@ void serial( int const &  n,
                 float prod = 0.0f;
                 for ( int k = 0; k < n; ++k ) {
                     prod += A[k * n + i] * B[j * n + k];
-                } // k
+                }  // k
                 C[j * n + i] = alpha * prod + beta * C[j * n + i];
-            } // j
-        }     // i
-    }         // loops
+            }  // j
+        }      // i
+    }          // loops
 
     timer.stopAndPrintCPU( loops );
     std::printf( "\n" );
 
-} // serial
+}  // serial
 
 int main( int argc, char **argv ) {
 
@@ -129,7 +129,7 @@ int main( int argc, char **argv ) {
     for ( int i = 0; i < n * n; i++ ) {
         h_A[i] = 2.0f;
         h_B[i] = 1.0f;
-    } // i
+    }  // i
 
     const int loops = 4;
 
@@ -170,4 +170,4 @@ int main( int argc, char **argv ) {
     delete[]( h_C_acc );
     delete[]( h_C_cublas );
     delete[]( h_C_cuda );
-} // main
+}  // main

@@ -35,10 +35,10 @@ $(OBJDIR)/blas.o: $(SRCDIR)/blas.cpp
 	$(NVCC) -x cu -ccbin $(CPP) $(CFLAGS) -c $^ -o $@
 	
 $(OBJDIR)/cublas.o: $(SRCDIR)/cublas.cpp
-	$(NVCC) -x cu -ccbin $(CPP) -cudart=static $(CFLAGS) -I/usr/local/cuda/samples/common/inc ${ARCHES} -c $^ -o $@ -lcublas
+	$(NVCC) -x cu -ccbin $(CPP) -cudart=static $(CFLAGS) ${ARCHES} -c $^ -o $@ -lcublas
 	
 $(OBJDIR)/cuda.o: $(SRCDIR)/cuda.cu
-	$(NVCC) -ccbin $(CPP) -cudart=static $(CFLAGS) -I/usr/local/cuda/samples/common/inc ${ARCHES} -c $^ -o $@
+	$(NVCC) -ccbin $(CPP) -cudart=static $(CFLAGS) ${ARCHES} -c $^ -o $@
 	
 $(OBJDIR)/openacc.o: $(SRCDIR)/openacc.cpp
 	$(PGI) $(PGIFLAGS) $(CFLAGS) -c $^ -o $@
@@ -48,4 +48,5 @@ $(OBJDIR)/openmp.o: $(SRCDIR)/openmp.cpp
 	
 clean:
 	@echo 'Cleaning up...'
+	@echo 'rm -rf $(SOURCES) $(OBJDIR)/*.o'
 	@rm -rf $(SOURCES) $(OBJDIR)/*.o

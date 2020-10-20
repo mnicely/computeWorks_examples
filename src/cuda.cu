@@ -46,10 +46,28 @@
 #include <string>
 
 #include <cooperative_groups.h>
-#include <helper_cuda.h>
 
 #include "cuda.cuh"
 #include "timer.h"
+
+// *************** FOR ERROR CHECKING *******************
+#ifndef CUDA_RT_CALL
+#define CUDA_RT_CALL( call )                                                                                           \
+    {                                                                                                                  \
+        auto status = static_cast<cudaError_t>( call );                                                                \
+        if ( status != cudaSuccess )                                                                                   \
+            fprintf( stderr,                                                                                           \
+                     "ERROR: CUDA RT call \"%s\" in line %d of file %s failed "                                        \
+                     "with "                                                                                           \
+                     "%s (%d).\n",                                                                                     \
+                     #call,                                                                                            \
+                     __LINE__,                                                                                         \
+                     __FILE__,                                                                                         \
+                     cudaGetErrorString( status ),                                                                     \
+                     status );                                                                                         \
+    }
+#endif  // CUDA_RT_CALL
+// *************** FOR ERROR CHECKING *******************
 
 // Thread block size
 #define BLOCK_SIZE 16
@@ -104,11 +122,11 @@ MatMulKernel( int const n, float const *__restrict__ A, float const *__restrict_
         // Synchronize to make sure that the preceding computation is done
         // before loading two new sub-matrices of A and B in the next iteration
         block.sync( );
-    } // m
+    }  // m
 
     // Write Csub to device memory each thread writes one element
     Csub[row * n + col] = Cvalue;
-} // MatMulKernel
+}  // MatMulKernel
 
 void cuda( int const &  n,
            float const &alpha,
@@ -125,13 +143,13 @@ void cuda( int const &  n,
     float *d_A, *d_B, *d_C;
 
     // Allocate memory on device
-    checkCudaErrors( cudaMalloc( ( void ** )&d_A, sizeof( float ) * n * n ) );
-    checkCudaErrors( cudaMalloc( ( void ** )&d_B, sizeof( float ) * n * n ) );
-    checkCudaErrors( cudaMalloc( ( void ** )&d_C, sizeof( float ) * n * n ) );
+    CUDA_RT_CALL( cudaMalloc( ( void ** )&d_A, sizeof( float ) * n * n ) );
+    CUDA_RT_CALL( cudaMalloc( ( void ** )&d_B, sizeof( float ) * n * n ) );
+    CUDA_RT_CALL( cudaMalloc( ( void ** )&d_C, sizeof( float ) * n * n ) );
 
     // Copy host memory to device
-    checkCudaErrors( cudaMemcpy( d_A, A, sizeof( float ) * n * n, cudaMemcpyHostToDevice ) );
-    checkCudaErrors( cudaMemcpy( d_B, B, sizeof( float ) * n * n, cudaMemcpyHostToDevice ) );
+    CUDA_RT_CALL( cudaMemcpy( d_A, A, sizeof( float ) * n * n, cudaMemcpyHostToDevice ) );
+    CUDA_RT_CALL( cudaMemcpy( d_B, B, sizeof( float ) * n * n, cudaMemcpyHostToDevice ) );
 
     // setup the dimensions
     dim3 blocksPerGrid( ( n + BLOCK_SIZE - 1 ) / BLOCK_SIZE, ( n + BLOCK_SIZE - 1 ) / BLOCK_SIZE );
@@ -142,15 +160,15 @@ void cuda( int const &  n,
     for ( int l = 0; l < loops; l++ )
         MatMulKernel<<<blocksPerGrid, threadsPerBlock>>>( n, d_A, d_B, d_C );
 
-    checkCudaErrors( cudaDeviceSynchronize( ) );
+    CUDA_RT_CALL( cudaDeviceSynchronize( ) );
 
     timer.stopAndPrintGPU( loops );
 
     // Copy results from device to host
-    checkCudaErrors( cudaMemcpy( C, d_C, sizeof( float ) * n * n, cudaMemcpyDeviceToHost ) );
+    CUDA_RT_CALL( cudaMemcpy( C, d_C, sizeof( float ) * n * n, cudaMemcpyDeviceToHost ) );
 
-    checkCudaErrors( cudaFree( d_A ) );
-    checkCudaErrors( cudaFree( d_B ) );
-    checkCudaErrors( cudaFree( d_C ) );
+    CUDA_RT_CALL( cudaFree( d_A ) );
+    CUDA_RT_CALL( cudaFree( d_B ) );
+    CUDA_RT_CALL( cudaFree( d_C ) );
 
-} // cuda
+}  // cuda

@@ -46,10 +46,28 @@
 #include <string>
 
 #include <cublas_v2.h>
-#include <helper_cuda.h>
 
 #include "cublas.h"
 #include "timer.h"
+
+// *************** FOR ERROR CHECKING *******************
+#ifndef CUDA_RT_CALL
+#define CUDA_RT_CALL( call )                                                                                           \
+    {                                                                                                                  \
+        auto status = static_cast<cudaError_t>( call );                                                                \
+        if ( status != cudaSuccess )                                                                                   \
+            fprintf( stderr,                                                                                           \
+                     "ERROR: CUDA RT call \"%s\" in line %d of file %s failed "                                        \
+                     "with "                                                                                           \
+                     "%s (%d).\n",                                                                                     \
+                     #call,                                                                                            \
+                     __LINE__,                                                                                         \
+                     __FILE__,                                                                                         \
+                     cudaGetErrorString( status ),                                                                     \
+                     status );                                                                                         \
+    }
+#endif  // CUDA_RT_CALL
+// *************** FOR ERROR CHECKING *******************
 
 void cublas( int const &  n,
              float const &alpha,
@@ -65,33 +83,32 @@ void cublas( int const &  n,
     // Declare device pointers and cublas handle
     float *        d_A, *d_B, *d_C;
     cublasHandle_t handle;
-    checkCudaErrors( cublasCreate( &handle ) );
+    CUDA_RT_CALL( cublasCreate( &handle ) );
 
     // Allocate memory on device
-    checkCudaErrors( cudaMalloc( ( void ** )&d_A, sizeof( float ) * n * n ) );
-    checkCudaErrors( cudaMalloc( ( void ** )&d_B, sizeof( float ) * n * n ) );
-    checkCudaErrors( cudaMalloc( ( void ** )&d_C, sizeof( float ) * n * n ) );
+    CUDA_RT_CALL( cudaMalloc( ( void ** )&d_A, sizeof( float ) * n * n ) );
+    CUDA_RT_CALL( cudaMalloc( ( void ** )&d_B, sizeof( float ) * n * n ) );
+    CUDA_RT_CALL( cudaMalloc( ( void ** )&d_C, sizeof( float ) * n * n ) );
 
     // Copy host memory to device
-    checkCudaErrors( cudaMemcpy( d_A, A, sizeof( float ) * n * n, cudaMemcpyHostToDevice ) );
-    checkCudaErrors( cudaMemcpy( d_B, B, sizeof( float ) * n * n, cudaMemcpyHostToDevice ) );
+    CUDA_RT_CALL( cudaMemcpy( d_A, A, sizeof( float ) * n * n, cudaMemcpyHostToDevice ) );
+    CUDA_RT_CALL( cudaMemcpy( d_B, B, sizeof( float ) * n * n, cudaMemcpyHostToDevice ) );
 
     timer.startGPUTimer( );
 
     for ( int l = 0; l < loops; l++ )
-        checkCudaErrors(
-            cublasSgemm( handle, CUBLAS_OP_N, CUBLAS_OP_N, n, n, n, &alpha, d_A, n, d_B, n, &beta, d_C, n ) );
+        CUDA_RT_CALL( cublasSgemm( handle, CUBLAS_OP_N, CUBLAS_OP_N, n, n, n, &alpha, d_A, n, d_B, n, &beta, d_C, n ) );
 
-    checkCudaErrors( cudaDeviceSynchronize( ) );
+    CUDA_RT_CALL( cudaDeviceSynchronize( ) );
 
     timer.stopAndPrintGPU( loops );
 
     // Copy results from device to host
-    checkCudaErrors( cudaMemcpy( C, d_C, sizeof( float ) * n * n, cudaMemcpyDeviceToHost ) );
+    CUDA_RT_CALL( cudaMemcpy( C, d_C, sizeof( float ) * n * n, cudaMemcpyDeviceToHost ) );
 
-    checkCudaErrors( cudaFree( d_A ) );
-    checkCudaErrors( cudaFree( d_B ) );
-    checkCudaErrors( cudaFree( d_C ) );
-    checkCudaErrors( cublasDestroy( handle ) );
+    CUDA_RT_CALL( cudaFree( d_A ) );
+    CUDA_RT_CALL( cudaFree( d_B ) );
+    CUDA_RT_CALL( cudaFree( d_C ) );
+    CUDA_RT_CALL( cublasDestroy( handle ) );
 
-} // cublas
+}  // cublas

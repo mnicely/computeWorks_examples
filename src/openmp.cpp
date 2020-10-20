@@ -79,12 +79,12 @@ void openMP( int const &  n,
                 float prod = 0.0f;
                 for ( k = 0; k < n; ++k ) {
                     prod += A[k * n + i] * B[j * n + k];
-                } // k
+                }  // k
                 C[j * n + i] = alpha * prod + beta * C[j * n + i];
-            } // j
-        }     // i
-    }         // loops
+            }  // j
+        }      // i
+    }          // loops
 
     timer.stopAndPrintCPU( loops );
 
-} // openMP
+}  // openMP

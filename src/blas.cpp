@@ -66,4 +66,4 @@ void blas( int const &  n,
 
     timer.stopAndPrintCPU( loops );
 
-} // blas
+}  // blas
